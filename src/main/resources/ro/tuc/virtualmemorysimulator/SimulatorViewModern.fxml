@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane prefHeight="820.0" prefWidth="1520.0" styleClass="root-pane" stylesheets="@simulator-modern.css"
+            xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ro.tuc.virtualmemorysimulator.PresentationLayer.SimulatorController">
+
+    <padding>
+        <Insets bottom="16" left="16" right="16" top="16" />
+    </padding>
+
+    <!-- ==================== TOP: HEADER ==================== -->
+    <top>
+        <VBox spacing="12">
+            <HBox alignment="CENTER_LEFT" spacing="20">
+                <Label fx:id="titleLabel" styleClass="title-label" text="Virtual Memory Simulator" />
+                <Region HBox.hgrow="ALWAYS" />
+                <HBox alignment="CENTER_RIGHT" spacing="12" styleClass="stats-container">
+                    <Label fx:id="statsRequests" styleClass="stat-label" text="Requests: 0" />
+                    <Separator orientation="VERTICAL" />
+                    <Label fx:id="statsFaults" styleClass="stat-label" text="Faults: 0" />
+                    <Separator orientation="VERTICAL" />
+                    <Label fx:id="statsRate" styleClass="stat-label-primary" text="Fault Rate: 0%" />
+                </HBox>
+            </HBox>
+            <Separator styleClass="header-separator" />
+        </VBox>
+    </top>
+
+    <!-- ==================== LEFT: CONTROL PANEL ==================== -->
+    <left>
+        <VBox prefWidth="300" spacing="16" styleClass="control-panel">
+            <padding>
+                <Insets right="16" top="12" />
+            </padding>
+
+            <!-- Algorithm Selection Card -->
+            <VBox spacing="10" styleClass="card">
+                <Label styleClass="card-title" text="Simulation Setup" />
+
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <Label fx:id="algorithmLabel" text="Algorithm:" />
+                    <ComboBox fx:id="algorithmChoice" prefWidth="120" />
+                </HBox>
+
+                <Button fx:id="startButton" maxWidth="Infinity" onAction="#onStartSimulationClicked"
+                        styleClass="btn-primary" text="Start Simulation" />
+            </VBox>
+
+            <!-- Trace Input Card -->
+            <VBox spacing="10" styleClass="card" VBox.vgrow="ALWAYS">
+                <Label styleClass="card-title" text="Instruction Trace" />
+                <Label fx:id="traceLabel" styleClass="card-subtitle" text="Enter addresses in hex format (e.g., 12345678:R)" />
+
+                <TextArea fx:id="traceArea" prefHeight="140" promptText="12345678:R, 12345ABC:W, ..."
+                          styleClass="trace-input" wrapText="true" VBox.vgrow="ALWAYS" />
+
+                <HBox spacing="8">
+                    <Button fx:id="exampleButton" onAction="#onExampleTraceClicked"
+                            styleClass="btn-secondary" text="Load Example" HBox.hgrow="ALWAYS" maxWidth="Infinity" />
+                    <Button fx:id="generateButton" onAction="#onGenerateRandomTraceClicked"
+                            styleClass="btn-secondary" text="Generate" HBox.hgrow="ALWAYS" maxWidth="Infinity" />
+                </HBox>
+
+                <Button fx:id="submitButton" maxWidth="Infinity" onAction="#onSubmitTraceClicked"
+                        styleClass="btn-primary" text="Submit Trace" />
+            </VBox>
+
+            <!-- Simulation Controls Card -->
+            <VBox spacing="10" styleClass="card">
+                <Label styleClass="card-title" text="Simulation Controls" />
+
+                <HBox spacing="8">
+                    <Button fx:id="stepButton" onAction="#onStepClicked" styleClass="btn-step"
+                            text="Step" HBox.hgrow="ALWAYS" maxWidth="Infinity" />
+                    <Button fx:id="runButton" onAction="#onRunClicked" styleClass="btn-run"
+                            text="Run" HBox.hgrow="ALWAYS" maxWidth="Infinity" />
+                    <Button fx:id="resetButton" onAction="#onResetClicked" styleClass="btn-reset"
+                            text="Reset" HBox.hgrow="ALWAYS" maxWidth="Infinity" />
+                </HBox>
+            </VBox>
+
+            <!-- Configuration Info -->
+            <VBox styleClass="card" VBox.vgrow="SOMETIMES">
+                <Label styleClass="card-title" text="Configuration" />
+                <Label fx:id="configLabel" styleClass="config-text" visible="false" wrapText="true" />
+            </VBox>
+        </VBox>
+    </left>
+
+    <!-- ==================== CENTER: MAIN CONTENT ==================== -->
+    <center>
+        <VBox spacing="16">
+            <padding>
+                <Insets top="12" />
+            </padding>
+
+            <!-- Current Instruction Display -->
+            <HBox spacing="20">
+                <VBox spacing="6" HBox.hgrow="ALWAYS">
+                    <Label fx:id="currentInstructionLabel" styleClass="instruction-current"
+                           text="Current Instruction: [none]" />
+                    <Label fx:id="nextInstructionsLabel" styleClass="instruction-next"
+                           text="Next Instructions: [none]" wrapText="true" />
+                </VBox>
+            </HBox>
+
+            <!-- Address Breakdown and Status Row -->
+            <HBox spacing="16" alignment="TOP_LEFT">
+
+                <!-- Address Breakdown Card -->
+                <VBox fx:id="breakdownBox" spacing="8" styleClass="card breakdown-card">
+                    <Label styleClass="card-title" text="Address Breakdown" />
+
+                    <!-- Column Headers -->
+                    <HBox spacing="0" styleClass="breakdown-row">
+                        <Label alignment="CENTER" prefWidth="140" styleClass="breakdown-header"
+                               text="Directory (10 bits)" />
+                        <Label alignment="CENTER" prefWidth="140" styleClass="breakdown-header"
+                               text="Table (10 bits)" />
+                        <Label alignment="CENTER" prefWidth="140" styleClass="breakdown-header"
+                               text="Offset (12 bits)" />
+                    </HBox>
+
+                    <!-- Binary Values -->
+                    <HBox spacing="0" styleClass="breakdown-row">
+                        <Label fx:id="dirBitsLabel" alignment="CENTER" prefWidth="140"
+                               styleClass="breakdown-cell mono" text="[none]" />
+                        <Label fx:id="tabBitsLabel" alignment="CENTER" prefWidth="140"
+                               styleClass="breakdown-cell mono" text="[none]" />
+                        <Label fx:id="offsetBitsLabel" alignment="CENTER" prefWidth="140"
+                               styleClass="breakdown-cell mono" text="[none]" />
+                    </HBox>
+
+                    <!-- Hex Values -->
+                    <HBox spacing="0" styleClass="breakdown-row">
+                        <Label fx:id="dirHexLabel" alignment="CENTER" prefWidth="140"
+                               styleClass="breakdown-cell mono" text="[none]" />
+                        <Label fx:id="tabHexLabel" alignment="CENTER" prefWidth="140"
+                               styleClass="breakdown-cell mono" text="[none]" />
+                        <Label fx:id="offsetHexLabel" alignment="CENTER" prefWidth="140"
+                               styleClass="breakdown-cell mono" text="[none]" />
+                    </HBox>
+
+                    <!-- VPN Display -->
+                    <HBox alignment="CENTER">
+                        <Label fx:id="vpnLabel" alignment="CENTER" styleClass="vpn-label mono" text="VPN: [none]" />
+                    </HBox>
+                </VBox>
+
+                <!-- Status Display Card -->
+                <VBox styleClass="card status-card" HBox.hgrow="ALWAYS">
+                    <Label styleClass="card-title" text="Execution Status" />
+                    <Label fx:id="statusLabel" styleClass="status-text" visible="false" wrapText="true"
+                           VBox.vgrow="ALWAYS" />
+                </VBox>
+            </HBox>
+
+            <!-- Tables Section -->
+            <HBox spacing="16" VBox.vgrow="ALWAYS">
+
+                <!-- Page Directory Table -->
+                <VBox spacing="8" styleClass="table-container" HBox.hgrow="ALWAYS">
+                    <Label styleClass="table-title" text="Page Directory" />
+                    <TableView fx:id="directoryTable" styleClass="data-table" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="dirIndexColumn" prefWidth="100" text="Dir Index" />
+                            <TableColumn fx:id="presentColumn" prefWidth="80" sortType="DESCENDING" text="Present" />
+                            <TableColumn fx:id="tableRefColumn" prefWidth="120" text="Page Table Ref" />
+                        </columns>
+                        <columnResizePolicy>
+                            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                        </columnResizePolicy>
+                    </TableView>
+                </VBox>
+
+                <!-- Page Table -->
+                <VBox spacing="8" styleClass="table-container" HBox.hgrow="ALWAYS" prefWidth="420">
+                    <Label fx:id="pageTableLabel" styleClass="table-title" text="Page Table [none]" />
+                    <TableView fx:id="pageTableTable" styleClass="data-table" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="pageIndexColumn" prefWidth="85" text="Page Index" />
+                            <TableColumn fx:id="vpnColumnPT" prefWidth="120" text="VPN" />
+                            <TableColumn fx:id="frameColumnPT" prefWidth="75" text="Frame #" />
+                            <TableColumn fx:id="validColumn" prefWidth="60" sortType="DESCENDING" text="Valid" />
+                            <TableColumn fx:id="dirtyColumn" prefWidth="60" text="Dirty" />
+                        </columns>
+                        <columnResizePolicy>
+                            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                        </columnResizePolicy>
+                    </TableView>
+                </VBox>
+
+                <!-- Right Column: TLB + Frames -->
+                <VBox spacing="16" prefWidth="280">
+
+                    <!-- TLB Table -->
+                    <VBox spacing="8" styleClass="table-container" VBox.vgrow="ALWAYS">
+                        <Label fx:id="tlbLabel" styleClass="table-title" text="TLB Contents" />
+                        <TableView fx:id="tlbTable" styleClass="data-table" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="vpnColumn" prefWidth="140" text="VPN" />
+                                <TableColumn fx:id="frameColumnTLB" prefWidth="100" text="Frame #" />
+                            </columns>
+                            <columnResizePolicy>
+                                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                            </columnResizePolicy>
+                        </TableView>
+                    </VBox>
+
+                    <!-- Physical Memory (Frames) Table -->
+                    <VBox spacing="8" styleClass="table-container" VBox.vgrow="ALWAYS">
+                        <Label fx:id="framesTableLabel" styleClass="table-title" text="Physical Memory (Frames)" />
+                        <TableView fx:id="frameTable" styleClass="data-table" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="frameIdColumn" prefWidth="80" text="Frame #" />
+                                <TableColumn fx:id="vpnInFrameColumn" prefWidth="160" text="VPN" />
+                            </columns>
+                            <columnResizePolicy>
+                                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                            </columnResizePolicy>
+                        </TableView>
+                    </VBox>
+                </VBox>
+            </HBox>
+        </VBox>
+    </center>
+
+</BorderPane>
