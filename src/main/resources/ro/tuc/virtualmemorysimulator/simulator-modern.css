@@ -39,9 +39,10 @@
 
 .table-title {
     -fx-font-size: 13px;
-    -fx-font-weight: 600;
+    -fx-font-weight: bold;
     -fx-text-fill: #334155;
-    -fx-padding: 0 0 2 4;
+    -fx-padding: 0 0 2 0;
+    -fx-alignment: center;
 }
 
 .mono {
@@ -330,6 +331,17 @@
     -fx-font-size: 11px;
     -fx-text-fill: #64748b;
     -fx-line-spacing: 1;
+}
+
+.config-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+
+.config-scroll > .viewport {
+    -fx-background-color: transparent;
 }
 
 /* =====================================================

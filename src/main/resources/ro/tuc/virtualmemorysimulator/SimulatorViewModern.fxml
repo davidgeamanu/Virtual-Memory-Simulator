@@ -6,6 +6,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.BorderPane?>
@@ -99,7 +100,9 @@
             <!-- Configuration Info -->
             <VBox styleClass="card" VBox.vgrow="SOMETIMES">
                 <Label styleClass="card-title" text="Configuration" />
-                <Label fx:id="configLabel" styleClass="config-text" visible="false" wrapText="true" />
+                <ScrollPane fitToWidth="true" styleClass="config-scroll" VBox.vgrow="ALWAYS">
+                    <Label fx:id="configLabel" styleClass="config-text" visible="false" wrapText="true" />
+                </ScrollPane>
             </VBox>
         </VBox>
     </left>
@@ -177,7 +180,7 @@
 
                 <!-- Page Directory Table -->
                 <VBox spacing="8" styleClass="table-container" HBox.hgrow="ALWAYS">
-                    <Label styleClass="table-title" text="Page Directory" />
+                    <Label alignment="CENTER" maxWidth="Infinity" styleClass="table-title" text="Page Directory" />
                     <TableView fx:id="directoryTable" styleClass="data-table" VBox.vgrow="ALWAYS">
                         <columns>
                             <TableColumn fx:id="dirIndexColumn" prefWidth="100" text="Dir Index" />
@@ -192,7 +195,7 @@
 
                 <!-- Page Table -->
                 <VBox spacing="8" styleClass="table-container" HBox.hgrow="ALWAYS" prefWidth="420">
-                    <Label fx:id="pageTableLabel" styleClass="table-title" text="Page Table [none]" />
+                    <Label fx:id="pageTableLabel" alignment="CENTER" maxWidth="Infinity" styleClass="table-title" text="Page Table [none]" />
                     <TableView fx:id="pageTableTable" styleClass="data-table" VBox.vgrow="ALWAYS">
                         <columns>
                             <TableColumn fx:id="pageIndexColumn" prefWidth="85" text="Page Index" />
@@ -212,7 +215,7 @@
 
                     <!-- TLB Table -->
                     <VBox spacing="8" styleClass="table-container" VBox.vgrow="ALWAYS">
-                        <Label fx:id="tlbLabel" styleClass="table-title" text="TLB Contents" />
+                        <Label fx:id="tlbLabel" alignment="CENTER" maxWidth="Infinity" styleClass="table-title" text="TLB Contents" />
                         <TableView fx:id="tlbTable" styleClass="data-table" VBox.vgrow="ALWAYS">
                             <columns>
                                 <TableColumn fx:id="vpnColumn" prefWidth="140" text="VPN" />
@@ -226,7 +229,7 @@
 
                     <!-- Physical Memory (Frames) Table -->
                     <VBox spacing="8" styleClass="table-container" VBox.vgrow="ALWAYS">
-                        <Label fx:id="framesTableLabel" styleClass="table-title" text="Physical Memory (Frames)" />
+                        <Label fx:id="framesTableLabel" alignment="CENTER" maxWidth="Infinity" styleClass="table-title" text="Physical Memory (Frames)" />
                         <TableView fx:id="frameTable" styleClass="data-table" VBox.vgrow="ALWAYS">
                             <columns>
                                 <TableColumn fx:id="frameIdColumn" prefWidth="80" text="Frame #" />
