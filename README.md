@@ -457,6 +457,12 @@ This project is available for educational purposes.
 
 ---
 
+## Author
+
+**David Geamanu**
+
+---
+
 ## Acknowledgments
 
 Developed as an educational tool for understanding operating system memory management concepts.
