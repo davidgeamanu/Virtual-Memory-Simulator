@@ -107,7 +107,7 @@
         </VBox>
     </left>
 
-    <!-- ==================== CENTER: MAIN CONTENT ==================== -->
+    <!-- ==================== MAIN CONTENT ==================== -->
     <center>
         <VBox spacing="16">
             <padding>
